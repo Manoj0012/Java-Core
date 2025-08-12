@@ -1,94 +1,97 @@
 package Service;
 
-import Repository.DB_Connectivity;
+import Model.TeacherModel;
+import Repository.AdminRepo;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class AdminService {
-    private final DB_Connectivity connectivity;
-    private final Connection dbconnection;
+    private AdminRepo adminRepo =null;
     public AdminService(){
-         this.connectivity=DB_Connectivity.getDatabase();
-         this.dbconnection=connectivity.getConnection();
+        adminRepo = new AdminRepo();
     }
 
-    public void viewTeachers() {
-        // need to apply view.......soon
-        String sql="SELECT * FROM teacher";
+    public void ViewAllTeachers(){
+        ResultSet rs;
+       try {
+            rs= adminRepo.AllTeachers();
+           while (rs.next()) {
+               System.out.println("==================================================");
+               System.out.println(
+                       "ID: " + rs.getInt(1) + " | "
+                               + "Name: " + rs.getString(2) + " | "
+                               + "Place: " + rs.getString(3) + " | "
+                               + "Department Id: " + rs.getString(4) + " | "
+                               + "Department Name: " + rs.getString(5) + " | "
+
+               );
+               System.out.println("==================================================");
+           }
+           if(rs!=null){
+               rs.close();
+           }
+       }
+       catch (SQLException e){
+           System.out.println(e.getMessage());
+       }
+       catch (Exception e) {
+           System.out.println("Data is null"+e.getMessage());
+       }
+    }
+
+    public  void  ViewTeacherByID(int id){
         try {
-            Statement st=dbconnection.createStatement();
-            ResultSet rs=st.executeQuery(sql);
-            System.out.println("==============================");
-            while(rs.next()){
+            ResultSet rs= adminRepo.ViewOneTeacher(id);
+            while(rs.next()) {
+                System.out.println("==================================================");
                 System.out.println(
-                        "ID: "+rs.getInt(1)+" | "
-                        +"Name: "+ rs.getString(2)+" | "
-                        +"Place: "+rs.getString(3));
+                        "ID: " + rs.getInt(1) + " | "
+                                + "Name: " + rs.getString(2) + " | "
+                                + "Place: " + rs.getString(3) + " | "
+                                + "Department Id: " + rs.getString(4) + " | "
+                                + "Department Name: " + rs.getString(5) + " | "
+
+                );
+                System.out.println("==================================================");
             }
-            st.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void addTeacher(String name,String place,String username,String password,int dep_id){
-        String sql="INSERT INTO teacher(t_name,t_place,username,password,dep_id) VALUES (?, ?, ?, ?, ?);";
-        try{
-
-            PreparedStatement pt= dbconnection.prepareStatement(sql);
-            pt.setString(1, name);
-            pt.setString(2, place);
-            pt.setString(3, username);
-            pt.setString(4, password);
-            pt.setInt(5, dep_id);
-            pt.executeUpdate();
-            pt.close();
+            if(rs!=null){
+                rs.close();
+            }
         }
         catch (SQLException e){
-            System.out.println("Failed! to Insert the Data "+e.getMessage());
-        }
-        catch (Exception e){
             System.out.println(e.getMessage());
+        }
+        catch (Exception e) {
+            System.out.println("Data is null"+e.getMessage());
         }
     }
 
-    public void updateTeacher(String name,String place,String username,String password,int dep_id,int id){
-        String sql="UPDATE  teacher set t_name=?,t_place=?,username=?,password=?,dep_id=? where t_id=?;";
-        System.out.println(sql);
-        try{
 
-            PreparedStatement pt= dbconnection.prepareStatement(sql);
-            pt.setString(1, name);
-            pt.setString(2, place);
-            pt.setString(3, username);
-            pt.setString(4, password);
-            pt.setInt(5, dep_id);
-            pt.setInt(6, id);
-            pt.executeUpdate();
-            pt.close();
+    public void AddTeacher(TeacherModel t){
+        int row=adminRepo.addTeacher(t);
+        if(row<=0){
+            System.out.println("Teacher Failed to Add");
+            return;
         }
-        catch (SQLException e){
-            System.out.println("Failed! to Insert the Data "+e.getMessage());
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        System.out.println(row+" Teacher Added");
     }
 
-    public void deleteTeacher(int id){
-        String sql="DELETE FROM teacher where t_id=?;";
-        try{
-            PreparedStatement  pt=dbconnection.prepareStatement(sql);
-            pt.setInt(1, id);
-            pt.executeUpdate();
-            System.out.println("Teacher data deleted!");
-            pt.close();
 
-        } catch (SQLException e) {
-            System.out.println("Failed! to Delete the Data "+e.getMessage());
+    public void UpdateTeacher(TeacherModel t,int id){
+        int row=adminRepo.updateTeacher(t,id);
+        if(row<=0){
+            System.out.println("Teacher Failed to Update");
+            return;
         }
-        catch (Exception e){
-            System.out.println(e.getMessage());
+        System.out.println(row+" Teacher Updated");
+    }
+    public void DeleteTeacher(int id){
+        int row=adminRepo.deleteTeacher(id);
+        if(row<=0){
+            System.out.println("Teacher Failed to delete");
+            return;
         }
+        System.out.println(row+" Teacher deleted");
     }
 }

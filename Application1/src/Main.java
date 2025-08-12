@@ -1,20 +1,17 @@
+import Model.TeacherModel;
 import Repository.DB_Connectivity;
+import Repository.AdminRepo;
 import Service.AdminService;
-
-import java.sql.Connection;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        /// fro testing only
         DB_Connectivity connectivity=DB_Connectivity.getDatabase();
         AdminService adminService=new AdminService();
-
-//        adminService.updateTeacher("JAN Adrean","usa","jan1243","0000",2,3);
-//        adminService.deleteTeacher(2);
-        adminService.viewTeachers();
-        connectivity.closeConnection();
-
+//        adminService.UpdateTeacher(new TeacherModel("manoj upadte","tamilnode","m000","0000",2),4);
+//        adminService.DeleteTeacher(4);
+        adminService.ViewTeacherByID(3);
+//        adminService.ViewAllTeachers();
     }
 }
