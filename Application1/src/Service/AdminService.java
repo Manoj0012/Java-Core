@@ -13,23 +13,11 @@ public class AdminService {
     }
 
     public void ViewAllTeachers(){
-        ResultSet rs;
        try {
-            rs= adminRepo.AllTeachers();
-           while (rs.next()) {
-               System.out.println("==================================================");
-               System.out.println(
-                       "ID: " + rs.getInt(1) + " | "
-                               + "Name: " + rs.getString(2) + " | "
-                               + "Place: " + rs.getString(3) + " | "
-                               + "Department Id: " + rs.getString(4) + " | "
-                               + "Department Name: " + rs.getString(5) + " | "
-
-               );
-               System.out.println("==================================================");
-           }
-           if(rs!=null){
-               rs.close();
+            ResultSet res= adminRepo.AllTeachers();
+            PrintTeacher(res);
+           if(res!=null){
+               res.close();
            }
        }
        catch (SQLException e){
@@ -42,21 +30,10 @@ public class AdminService {
 
     public  void  ViewTeacherByID(int id){
         try {
-            ResultSet rs= adminRepo.ViewOneTeacher(id);
-            while(rs.next()) {
-                System.out.println("==================================================");
-                System.out.println(
-                        "ID: " + rs.getInt(1) + " | "
-                                + "Name: " + rs.getString(2) + " | "
-                                + "Place: " + rs.getString(3) + " | "
-                                + "Department Id: " + rs.getString(4) + " | "
-                                + "Department Name: " + rs.getString(5) + " | "
-
-                );
-                System.out.println("==================================================");
-            }
-            if(rs!=null){
-                rs.close();
+            ResultSet res= adminRepo.ViewOneTeacher(id);
+            PrintTeacher(res);
+            if(res!=null){
+                res.close();
             }
         }
         catch (SQLException e){
@@ -69,7 +46,12 @@ public class AdminService {
 
 
     public void AddTeacher(TeacherModel t){
-        int row=adminRepo.addTeacher(t);
+        int row= 0;
+        try {
+            row = adminRepo.addTeacher(t);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if(row<=0){
             System.out.println("Teacher Failed to Add");
             return;
@@ -79,7 +61,12 @@ public class AdminService {
 
 
     public void UpdateTeacher(TeacherModel t,int id){
-        int row=adminRepo.updateTeacher(t,id);
+        int row= 0;
+        try {
+            row = adminRepo.updateTeacher(t,id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if(row<=0){
             System.out.println("Teacher Failed to Update");
             return;
@@ -87,11 +74,30 @@ public class AdminService {
         System.out.println(row+" Teacher Updated");
     }
     public void DeleteTeacher(int id){
-        int row=adminRepo.deleteTeacher(id);
+        int row= 0;
+        try {
+            row = adminRepo.deleteTeacher(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if(row<=0){
             System.out.println("Teacher Failed to delete");
             return;
         }
         System.out.println(row+" Teacher deleted");
+    }
+
+    private void PrintTeacher(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            System.out.println("==================================================");
+            System.out.println(
+                    "ID: " + rs.getInt(1) + " | "
+                            + "Name: " + rs.getString(2) + " | "
+                            + "Place: " + rs.getString(3) + " | "
+                            + "Department Id: " + rs.getString(4) + " | "
+                            + "Department Name: " + rs.getString(5) + " | "
+            );
+            System.out.println("==================================================");
+        }
     }
 }

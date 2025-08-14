@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
+// Follows Singleton Design pattern
 public class DB_Connectivity {
     private  Connection con = null;
     private static DB_Connectivity database=null;

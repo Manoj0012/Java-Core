@@ -35,4 +35,5 @@ public class TeacherModel {
     public int getDep_id() {
         return dep_id;
     }
+
 }
